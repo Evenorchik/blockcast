@@ -34,7 +34,7 @@ case $choice in
         sudo apt install curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip libleveldb-dev -y
         
         echo -e "${RED}Checking Docker and Docker-Compose...${NC}"
-        if ! bash <(curl -fsSL https://raw.githubusercontent.com/noxuspace/cryptofortochka/main/docker/docker_main.sh); then
+        if ! bash <(curl -fsSL https://raw.githubusercontent.com/Evenorchik/blockcast/refs/heads/main/docker_inst.sh); then
           echo -e "${RED}Failed to install Docker/Compose${NC}" >&2
           exit 1
         fi
