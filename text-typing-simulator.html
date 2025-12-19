@@ -279,6 +279,159 @@
             background: #1e3a1e;
             color: #30d158;
         }
+
+        /* iOS Keyboard Styles */
+        .keyboard-container {
+            background: #d1d3d9;
+            padding: 10px 5px 5px 5px;
+            border-top: 1px solid #a0a2a8;
+            transition: all 0.3s ease;
+        }
+
+        .keyboard-container.hidden {
+            display: none;
+        }
+
+        .keyboard-suggestions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 0 5px;
+        }
+
+        .suggestion {
+            flex: 1;
+            background: #fff;
+            border: 1px solid #c7c7cc;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .key {
+            background: #fff;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+            color: #000;
+            font-size: 22px;
+            font-weight: 400;
+            height: 42px;
+            min-width: 32px;
+            padding: 0 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.05s ease;
+            position: relative;
+        }
+
+        .key:active,
+        .key.pressed {
+            background: #c7c7cc;
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .key.pressed::before {
+            content: attr(data-key);
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 1px solid #c7c7cc;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 32px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .key.special {
+            background: #aeb0b5;
+            color: #000;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .key.special:active,
+        .key.special.pressed {
+            background: #878a91;
+        }
+
+        .key.space {
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .key.shift,
+        .key.delete {
+            min-width: 42px;
+        }
+
+        .keyboard-row:nth-child(2) {
+            padding: 0 15px;
+        }
+
+        .keyboard-row:nth-child(3) {
+            padding: 0 30px;
+        }
+
+        .keyboard-bottom {
+            display: flex;
+            gap: 6px;
+            padding: 0 5px;
+        }
+
+        .key.number-toggle {
+            min-width: 42px;
+        }
+
+        .key.emoji {
+            min-width: 42px;
+            font-size: 20px;
+        }
+
+        .key.send-key {
+            min-width: 42px;
+            background: #0a84ff;
+            color: #fff;
+        }
+
+        .key.send-key:active,
+        .key.send-key.pressed {
+            background: #0066cc;
+        }
+
+        @keyframes keyPress {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .key.animate {
+            animation: keyPress 0.15s ease;
+        }
     </style>
 </head>
 <body>
@@ -306,6 +459,72 @@
         </div>
     </div>
 
+    <div class="keyboard-container" id="keyboard">
+        <div class="keyboard-suggestions">
+            <div class="suggestion">food</div>
+            <div class="suggestion">coffee</div>
+            <div class="suggestion">more</div>
+        </div>
+
+        <div class="keyboard-row">
+            <button class="key" data-key="q">q</button>
+            <button class="key" data-key="w">w</button>
+            <button class="key" data-key="e">e</button>
+            <button class="key" data-key="r">r</button>
+            <button class="key" data-key="t">t</button>
+            <button class="key" data-key="y">y</button>
+            <button class="key" data-key="u">u</button>
+            <button class="key" data-key="i">i</button>
+            <button class="key" data-key="o">o</button>
+            <button class="key" data-key="p">p</button>
+        </div>
+
+        <div class="keyboard-row">
+            <button class="key" data-key="a">a</button>
+            <button class="key" data-key="s">s</button>
+            <button class="key" data-key="d">d</button>
+            <button class="key" data-key="f">f</button>
+            <button class="key" data-key="g">g</button>
+            <button class="key" data-key="h">h</button>
+            <button class="key" data-key="j">j</button>
+            <button class="key" data-key="k">k</button>
+            <button class="key" data-key="l">l</button>
+        </div>
+
+        <div class="keyboard-row">
+            <button class="key special shift" data-key="⇧">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 5l-8 8h5v6h6v-6h5l-8-8z"/>
+                </svg>
+            </button>
+            <button class="key" data-key="z">z</button>
+            <button class="key" data-key="x">x</button>
+            <button class="key" data-key="c">c</button>
+            <button class="key" data-key="v">v</button>
+            <button class="key" data-key="b">b</button>
+            <button class="key" data-key="n">n</button>
+            <button class="key" data-key="m">m</button>
+            <button class="key special delete" data-key="⌫">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
+                    <line x1="18" y1="9" x2="12" y2="15"/>
+                    <line x1="12" y1="9" x2="18" y2="15"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="keyboard-bottom">
+            <button class="key special number-toggle" data-key="123">123</button>
+            <button class="key special emoji" data-key="🙂">🙂</button>
+            <button class="key special space" data-key=" ">space</button>
+            <button class="key special send-key" data-key="↵">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
     <div class="control-panel">
         <h3>Панель управления</h3>
 
@@ -319,6 +538,12 @@
                 Скорость набора: <span class="speed-value" id="speedValue">100 мс</span>
             </label>
             <input type="range" id="typingSpeed" min="50" max="500" value="100" step="10">
+        </div>
+
+        <div class="control-group">
+            <label>
+                <input type="checkbox" id="showKeyboard" checked> Показывать клавиатуру iOS
+            </label>
         </div>
 
         <div class="control-group">
@@ -363,6 +588,7 @@
                 this.textToTypeInput = document.getElementById('textToType');
                 this.typingSpeedInput = document.getElementById('typingSpeed');
                 this.speedValue = document.getElementById('speedValue');
+                this.showKeyboardCheckbox = document.getElementById('showKeyboard');
                 this.showCursorCheckbox = document.getElementById('showCursor');
                 this.autoSendCheckbox = document.getElementById('autoSend');
                 this.startButton = document.getElementById('startButton');
@@ -371,6 +597,14 @@
                 this.sendButton = document.getElementById('sendButton');
                 this.typingIndicator = document.getElementById('typingIndicator');
                 this.status = document.getElementById('status');
+                this.keyboard = document.getElementById('keyboard');
+
+                // Map all keyboard keys
+                this.keyElements = {};
+                document.querySelectorAll('.key').forEach(key => {
+                    const keyChar = key.getAttribute('data-key');
+                    this.keyElements[keyChar.toLowerCase()] = key;
+                });
             }
 
             initEventListeners() {
@@ -382,6 +616,14 @@
                 this.typingSpeedInput.addEventListener('input', (e) => {
                     this.typingSpeed = parseInt(e.target.value);
                     this.speedValue.textContent = `${this.typingSpeed} мс`;
+                });
+
+                this.showKeyboardCheckbox.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        this.keyboard.classList.remove('hidden');
+                    } else {
+                        this.keyboard.classList.add('hidden');
+                    }
                 });
 
                 this.showCursorCheckbox.addEventListener('change', (e) => {
@@ -430,6 +672,10 @@
                 }
 
                 const char = this.textToType[this.currentIndex];
+
+                // Animate keyboard key press
+                this.animateKeyPress(char);
+
                 this.currentTextInput.value += char;
                 this.currentIndex++;
 
@@ -437,6 +683,40 @@
 
                 const delay = this.typingSpeed + (Math.random() * 50 - 25);
                 this.typingTimeout = setTimeout(() => this.typeNextCharacter(), delay);
+            }
+
+            animateKeyPress(char) {
+                const lowerChar = char.toLowerCase();
+                let keyElement = null;
+
+                // Handle space
+                if (char === ' ') {
+                    keyElement = this.keyElements[' '];
+                } else {
+                    // Try to find the key for this character
+                    keyElement = this.keyElements[lowerChar];
+                }
+
+                if (keyElement) {
+                    // Add pressed class
+                    keyElement.classList.add('pressed');
+
+                    // Remove pressed class after animation
+                    setTimeout(() => {
+                        keyElement.classList.remove('pressed');
+                    }, 150);
+                }
+
+                // If character is uppercase, also animate shift key
+                if (char !== lowerChar && char.match(/[A-Z]/)) {
+                    const shiftKey = this.keyElements['⇧'];
+                    if (shiftKey) {
+                        shiftKey.classList.add('pressed');
+                        setTimeout(() => {
+                            shiftKey.classList.remove('pressed');
+                        }, 150);
+                    }
+                }
             }
 
             updateDisplay() {
