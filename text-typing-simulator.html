@@ -307,11 +307,11 @@
             color: #30d158;
         }
 
-        /* iOS Keyboard Styles */
+        /* iOS Keyboard Styles - Dark Theme */
         .keyboard-container {
-            background: #d1d3d9;
+            background: #1c1c1e;
             padding: 10px 5px 5px 5px;
-            border-top: 1px solid #a0a2a8;
+            border-top: 1px solid #2c2c2e;
             transition: all 0.3s ease;
         }
 
@@ -327,11 +327,11 @@
         }
 
         .key {
-            background: #fff;
+            background: #3a3a3c;
             border: none;
             border-radius: 5px;
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
-            color: #000;
+            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+            color: #fff;
             font-size: 22px;
             font-weight: 400;
             height: 42px;
@@ -348,9 +348,9 @@
 
         .key:active,
         .key.pressed {
-            background: #c7c7cc;
+            background: #5a5a5c;
             transform: scale(1.1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
             z-index: 100;
         }
 
@@ -360,26 +360,27 @@
             bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
-            background: #fff;
-            border: 1px solid #c7c7cc;
+            background: #5a5a5c;
+            border: 1px solid #6a6a6c;
             border-radius: 8px;
             padding: 8px 12px;
             font-size: 32px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
             min-width: 50px;
             text-align: center;
         }
 
         .key.special {
-            background: #aeb0b5;
-            color: #000;
+            background: #2c2c2e;
+            color: #fff;
             font-size: 16px;
             font-weight: 500;
         }
 
         .key.special:active,
         .key.special.pressed {
-            background: #878a91;
+            background: #48484a;
         }
 
         .key.space {
@@ -686,7 +687,7 @@
                 this.currentIndex = 0;
                 this.isTyping = true;
                 this.currentTextInput.value = '';
-                this.typingIndicator.classList.add('active');
+                // Don't show typing indicator for user's own typing
                 this.updateStatus('Набираю текст...', true);
                 this.scrollToBottom();
 
@@ -759,7 +760,6 @@
 
             finishTyping() {
                 this.isTyping = false;
-                this.typingIndicator.classList.remove('active');
                 clearTimeout(this.typingTimeout);
                 this.updateDisplay();
 
@@ -796,6 +796,12 @@
 
                 if (!text) return;
 
+                // Remove status from previous message
+                if (this.lastMessageStatus) {
+                    this.lastMessageStatus.remove();
+                    this.lastMessageStatus = null;
+                }
+
                 // Create message wrapper
                 const messageWrapper = document.createElement('div');
                 messageWrapper.className = 'message-wrapper sent';
@@ -822,7 +828,9 @@
 
                 // Change status to "Read" after 1 second
                 setTimeout(() => {
-                    statusDiv.textContent = 'Read';
+                    if (statusDiv.parentElement) {
+                        statusDiv.textContent = 'Read';
+                    }
                 }, 1000);
 
                 // Trigger auto-reply after 2 seconds (if enabled)
