@@ -310,7 +310,7 @@
         /* iOS Keyboard Styles - Dark Theme */
         .keyboard-container {
             background: #1c1c1e;
-            padding: 10px 5px 5px 5px;
+            padding: 8px 3px 5px 3px;
             border-top: 1px solid #2c2c2e;
             transition: all 0.3s ease;
         }
@@ -319,24 +319,42 @@
             display: none;
         }
 
+        .keyboard-suggestions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            padding: 0 3px;
+        }
+
+        .suggestion {
+            flex: 1;
+            background: #2c2c2e;
+            border: 1px solid #3a3a3c;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
+        }
+
         .keyboard-row {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             margin-bottom: 10px;
         }
 
         .key {
             background: #3a3a3c;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
             color: #fff;
-            font-size: 22px;
-            font-weight: 400;
-            height: 42px;
-            min-width: 32px;
-            padding: 0 6px;
+            font-size: 23px;
+            font-weight: 300;
+            height: 46px;
+            min-width: 33px;
+            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -374,8 +392,8 @@
         .key.special {
             background: #2c2c2e;
             color: #fff;
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 15px;
+            font-weight: 400;
         }
 
         .key.special:active,
@@ -385,39 +403,39 @@
 
         .key.space {
             flex: 1;
-            max-width: 200px;
+            font-size: 15px;
         }
 
         .key.shift,
         .key.delete {
-            min-width: 42px;
-        }
-
-        .keyboard-row:nth-child(2) {
-            padding: 0 15px;
+            min-width: 44px;
         }
 
         .keyboard-row:nth-child(3) {
-            padding: 0 30px;
+            padding: 0 16px;
+        }
+
+        .keyboard-row:nth-child(4) {
+            padding: 0 5px;
         }
 
         .keyboard-bottom {
             display: flex;
-            gap: 6px;
-            padding: 0 5px;
+            gap: 5px;
+            padding: 0 3px;
         }
 
         .key.number-toggle {
-            min-width: 42px;
+            min-width: 46px;
         }
 
         .key.emoji {
-            min-width: 42px;
+            min-width: 46px;
             font-size: 20px;
         }
 
         .key.send-key {
-            min-width: 42px;
+            min-width: 46px;
             background: #0a84ff;
             color: #fff;
         }
@@ -475,6 +493,12 @@
     </div>
 
     <div class="keyboard-container" id="keyboard">
+        <div class="keyboard-suggestions">
+            <div class="suggestion">food</div>
+            <div class="suggestion">coffee</div>
+            <div class="suggestion">more</div>
+        </div>
+
         <div class="keyboard-row">
             <button class="key" data-key="q">q</button>
             <button class="key" data-key="w">w</button>
@@ -796,11 +820,10 @@
 
                 if (!text) return;
 
-                // Remove status from previous message
-                if (this.lastMessageStatus) {
-                    this.lastMessageStatus.remove();
-                    this.lastMessageStatus = null;
-                }
+                // Remove status from ALL previous sent messages
+                const allStatuses = this.messagesContainer.querySelectorAll('.message-status');
+                allStatuses.forEach(status => status.remove());
+                this.lastMessageStatus = null;
 
                 // Create message wrapper
                 const messageWrapper = document.createElement('div');
