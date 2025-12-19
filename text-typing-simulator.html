@@ -78,16 +78,43 @@
             border-bottom-right-radius: 5px;
         }
 
+        .message-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            max-width: 70%;
+        }
+
+        .message-wrapper.sent {
+            align-self: flex-end;
+            align-items: flex-end;
+        }
+
+        .message-wrapper.received {
+            align-self: flex-start;
+            align-items: flex-start;
+        }
+
+        .message-status {
+            font-size: 11px;
+            color: #8e8e93;
+            padding: 0 5px;
+            margin-top: 2px;
+        }
+
         .typing-indicator {
             display: none;
-            align-self: flex-end;
-            padding: 8px 12px;
-            font-size: 12px;
-            color: #8e8e93;
+            align-self: flex-start;
+            background: #3a3a3c;
+            padding: 12px 16px;
+            border-radius: 20px;
+            border-bottom-left-radius: 5px;
+            max-width: 60px;
         }
 
         .typing-indicator.active {
             display: block;
+            animation: fadeIn 0.3s ease-in;
         }
 
         .typing-indicator .dots {
@@ -292,24 +319,6 @@
             display: none;
         }
 
-        .keyboard-suggestions {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-            padding: 0 5px;
-        }
-
-        .suggestion {
-            flex: 1;
-            background: #fff;
-            border: 1px solid #c7c7cc;
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-            font-size: 14px;
-            color: #000;
-        }
-
         .keyboard-row {
             display: flex;
             justify-content: center;
@@ -441,8 +450,13 @@
     </div>
 
     <div class="messages-container" id="messagesContainer">
-        <div class="message received">What did you do</div>
-        <div class="message sent">Nothing lol</div>
+        <div class="message-wrapper received">
+            <div class="message received">What did you do</div>
+        </div>
+        <div class="message-wrapper sent">
+            <div class="message sent">Nothing lol</div>
+            <div class="message-status">Delivered</div>
+        </div>
         <div class="typing-indicator" id="typingIndicator">
             <span class="dots"><span>.</span><span>.</span><span>.</span></span>
         </div>
@@ -460,12 +474,6 @@
     </div>
 
     <div class="keyboard-container" id="keyboard">
-        <div class="keyboard-suggestions">
-            <div class="suggestion">food</div>
-            <div class="suggestion">coffee</div>
-            <div class="suggestion">more</div>
-        </div>
-
         <div class="keyboard-row">
             <button class="key" data-key="q">q</button>
             <button class="key" data-key="w">w</button>
@@ -558,6 +566,12 @@
             </label>
         </div>
 
+        <div class="control-group">
+            <label>
+                <input type="checkbox" id="autoReply" checked> Автоответы от собеседника
+            </label>
+        </div>
+
         <div class="control-buttons">
             <button class="btn btn-primary" id="startButton">▶ Начать набор</button>
             <button class="btn btn-secondary" id="stopButton">⏹ Остановить</button>
@@ -576,7 +590,16 @@
                 this.isTyping = false;
                 this.showCursor = false;
                 this.autoSend = true;
+                this.autoReply = true;
                 this.typingTimeout = null;
+                this.lastMessageStatus = null;
+
+                // Random reply messages from the other person
+                this.replyMessages = [
+                    "Aww that's sweet ❤️",
+                    "Can't wait to see you 😊",
+                    "Miss you too babe 💕"
+                ];
 
                 this.initElements();
                 this.initEventListeners();
@@ -591,6 +614,7 @@
                 this.showKeyboardCheckbox = document.getElementById('showKeyboard');
                 this.showCursorCheckbox = document.getElementById('showCursor');
                 this.autoSendCheckbox = document.getElementById('autoSend');
+                this.autoReplyCheckbox = document.getElementById('autoReply');
                 this.startButton = document.getElementById('startButton');
                 this.stopButton = document.getElementById('stopButton');
                 this.clearButton = document.getElementById('clearButton');
@@ -633,6 +657,10 @@
 
                 this.autoSendCheckbox.addEventListener('change', (e) => {
                     this.autoSend = e.target.checked;
+                });
+
+                this.autoReplyCheckbox.addEventListener('change', (e) => {
+                    this.autoReply = e.target.checked;
                 });
 
                 this.textToTypeInput.addEventListener('keypress', (e) => {
@@ -768,20 +796,83 @@
 
                 if (!text) return;
 
+                // Create message wrapper
+                const messageWrapper = document.createElement('div');
+                messageWrapper.className = 'message-wrapper sent';
+
+                // Create message bubble
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message sent';
                 messageDiv.textContent = text;
 
-                this.messagesContainer.insertBefore(messageDiv, this.typingIndicator);
+                // Create status
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'message-status';
+                statusDiv.textContent = 'Delivered';
+
+                messageWrapper.appendChild(messageDiv);
+                messageWrapper.appendChild(statusDiv);
+
+                this.messagesContainer.insertBefore(messageWrapper, this.typingIndicator);
                 this.currentTextInput.value = '';
                 this.sendButton.disabled = true;
+                this.lastMessageStatus = statusDiv;
 
                 this.scrollToBottom();
+
+                // Change status to "Read" after 1 second
+                setTimeout(() => {
+                    statusDiv.textContent = 'Read';
+                }, 1000);
+
+                // Trigger auto-reply after 2 seconds (if enabled)
+                if (this.autoReply) {
+                    setTimeout(() => {
+                        this.sendAutoReply();
+                    }, 2000);
+                }
+            }
+
+            sendAutoReply() {
+                // Show typing indicator
+                this.typingIndicator.classList.add('active');
+                this.scrollToBottom();
+
+                // Wait 2-4 seconds (random) then send reply
+                const delay = 2000 + Math.random() * 2000;
+                setTimeout(() => {
+                    // Hide typing indicator
+                    this.typingIndicator.classList.remove('active');
+
+                    // Pick random reply
+                    const reply = this.replyMessages[Math.floor(Math.random() * this.replyMessages.length)];
+
+                    // Create message wrapper
+                    const messageWrapper = document.createElement('div');
+                    messageWrapper.className = 'message-wrapper received';
+
+                    // Create message bubble
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'message received';
+                    messageDiv.textContent = reply;
+
+                    messageWrapper.appendChild(messageDiv);
+
+                    this.messagesContainer.insertBefore(messageWrapper, this.typingIndicator);
+                    this.scrollToBottom();
+                }, delay);
             }
 
             clearChat() {
-                const messages = this.messagesContainer.querySelectorAll('.message.sent');
-                messages.forEach(msg => msg.remove());
+                const messages = this.messagesContainer.querySelectorAll('.message-wrapper');
+                messages.forEach(msg => {
+                    // Keep only the initial messages
+                    const isInitial = msg.querySelector('.message.received')?.textContent === 'What did you do' ||
+                                    msg.querySelector('.message.sent')?.textContent === 'Nothing lol';
+                    if (!isInitial) {
+                        msg.remove();
+                    }
+                });
                 this.currentTextInput.value = '';
                 this.sendButton.disabled = true;
                 this.updateStatus('Чат очищен', false);
